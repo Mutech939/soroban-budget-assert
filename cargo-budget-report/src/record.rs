@@ -299,22 +299,40 @@ mod tests {
         }
 
         let mut recording = RecordingTransport::new(UpdatingMockTransport);
-        let _ = recording.deploy_contract(Path::new("c.wasm"), "alice", "testnet", "pkg1").unwrap();
-        let _ = recording.deploy_contract(Path::new("c.wasm"), "alice", "testnet", "pkg2").unwrap();
+        let _ = recording
+            .deploy_contract(Path::new("c.wasm"), "alice", "testnet", "pkg1")
+            .unwrap();
+        let _ = recording
+            .deploy_contract(Path::new("c.wasm"), "alice", "testnet", "pkg2")
+            .unwrap();
 
-        let _ = recording.build_invoke_xdr("C1", "alice", "testnet", "func1", &[], "pkg").unwrap();
-        let _ = recording.build_invoke_xdr("C1", "alice", "testnet", "func2", &[], "pkg").unwrap();
+        let _ = recording
+            .build_invoke_xdr("C1", "alice", "testnet", "func1", &[], "pkg")
+            .unwrap();
+        let _ = recording
+            .build_invoke_xdr("C1", "alice", "testnet", "func2", &[], "pkg")
+            .unwrap();
 
-        let _ = recording.simulate_transaction("XDR1", "pkg", "fn1").unwrap();
-        let _ = recording.simulate_transaction("XDR2", "pkg", "fn1").unwrap();
+        let _ = recording
+            .simulate_transaction("XDR1", "pkg", "fn1")
+            .unwrap();
+        let _ = recording
+            .simulate_transaction("XDR2", "pkg", "fn1")
+            .unwrap();
 
         let fixture = recording.into_fixture();
         // deploy_key("pkg2") and deploy_key("pkg1") are different keys, so check last write for invoke/simulate sharing same key
         let invoke_k = crate::transport::invoke_key("pkg", "func2");
-        assert_eq!(fixture.entries.get(&invoke_k).unwrap().as_str().unwrap(), "func2");
+        assert_eq!(
+            fixture.entries.get(&invoke_k).unwrap().as_str().unwrap(),
+            "func2"
+        );
 
         let sim_k = crate::transport::simulate_key("pkg", "fn1");
-        assert_eq!(fixture.entries.get(&sim_k).unwrap()["fn"].as_str().unwrap(), "fn1");
+        assert_eq!(
+            fixture.entries.get(&sim_k).unwrap()["fn"].as_str().unwrap(),
+            "fn1"
+        );
     }
 
     #[test]
